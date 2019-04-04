@@ -1,0 +1,32 @@
+[core]
+  editor = vim
+  excludefiles = /home/tony/.config/git/ignore
+[user]
+  name = Tony Collen
+  email = tony@halogenlabs.com
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+[branch "master"]
+  merge = master
+  remote = origin
+[alias]
+  staged = diff --cached
+  unadd = reset HEAD
+  oneline = log --pretty=oneline
+  ol = log --pretty=oneline
+  st = status
+  pom = push origin master
+  ci = commit
+  br = branch
+  co = checkout
+  snip = commit -m 'Snip whitespace'
+[push]
+  default = current
+[pull]
+  default = simple
+[diff]
+  algorithm = patience
+[log]
+  algorithm = patience
