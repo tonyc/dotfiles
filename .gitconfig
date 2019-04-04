@@ -6,7 +6,7 @@
   email = tony@halogenlabs.com
 [color]
   diff = auto
-  status = auto
+	status = always
   branch = auto
 [branch "master"]
   merge = master
