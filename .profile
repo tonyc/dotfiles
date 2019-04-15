@@ -57,6 +57,10 @@ export COMMAND_MODE=unix2003
 # enable command history for erlang/iex
 export ERL_AFLAGS="-kernel shell_history enabled"
 
+# Fixes enpass on linux being too large on laptop
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_SCREEN_SCALE_FACTORS=1
+
 # functions for git
 function parse_git_dirty {
   [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
@@ -84,7 +88,7 @@ export EB_HOME=~/.eb
 export PATH=$PATH:$EB_HOME
 
 export _Z_CMD="x"
-. $HOME/bin/z.sh
+#. $HOME/bin/z.sh
 
 
 # asdf
