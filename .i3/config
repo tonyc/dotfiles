@@ -79,9 +79,11 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 #bindsym $mod+$sup+space exec dmenu_run -fn 'DejaVu Sans Mono:pixelsize=16'
-bindsym $mod+$sup+space exec rofi -show drun -font "DejaVu Sans Mono 16" -modi drun -theme solarized
-
-bindsym $mod+Tab exec rofi -show window -font 'DejaVu Sans Mono 16'
+#bindsym $mod+space exec rofi -show drun -font "DejaVu Sans Mono 16" -modi drun -theme solarized
+#bindsym $mod+Tab exec rofi -show window -font 'DejaVu Sans Mono 16' -theme solarized
+#bindsym $mod+d exec rofi -show drun -font "San Francisco Display 16" -modi drun -theme solarized
+bindsym $mod+$sup+space exec rofi -show drun -font "San Francisco Display 16" -modi drun -theme solarized -lines 5
+bindsym $mod+Tab exec rofi -show window -font "San Francisco Display 16" -theme solarized
 
 # pulseaudio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
@@ -140,7 +142,7 @@ bindsym $mod+s layout toggle split
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+#bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -219,8 +221,9 @@ bar {
 }
 
 # i3-gaps config
-for_window [class=".*"] border pixel 0
-gaps inner 10
+# This needs to be 1 pixel because 0 causes graphical glitches
+for_window [class=".*"] border pixel 1
+gaps inner 5
 
 mode "gaps" {
     bindsym u gaps inner all minus 2
@@ -253,8 +256,6 @@ exec --no-startup-id nm-applet
 # pulseaudio systray
 exec --no-startup-id pasystray
 
-
-# workspaces
 
 # browsers
 #exec --no-startup-id "i3-msg 'workspace 2; exec google chrome; workspace 1'"
