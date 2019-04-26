@@ -157,11 +157,11 @@
 ! "Delete previous char" Set from: Default
 ! rofi.kb-remove-char-back:            BackSpace,Control+h
 ! "Delete till the end of line" Set from: Default
-! rofi.kb-remove-to-eol:               Control+k
+rofi.kb-remove-to-eol:                 Control+i
 ! "Delete till the start of line" Set from: Default
 ! rofi.kb-remove-to-sol:               Control+u
 ! "Accept entry" Set from: Default
-! rofi.kb-accept-entry:                Control+j,Control+m,Return,KP_Enter
+rofi.kb-accept-entry:                  Control+m,Return,KP_Enter
 ! "Use entered text as command (in ssh/run modi)" Set from: Default
 ! rofi.kb-accept-custom:               Control+Return
 ! "Use alternate accept command." Set from: Default
@@ -177,9 +177,9 @@
 ! "Go to the next column" Set from: Default
 ! rofi.kb-row-right:                   Control+Page_Down
 ! "Select previous entry" Set from: Default
-! rofi.kb-row-up:                      Up,Control+p,ISO_Left_Tab
+rofi.kb-row-up:                      Control+k,Up,Control+p,ISO_Left_Tab
 ! "Select next entry" Set from: Default
-! rofi.kb-row-down:                    Down,Control+n
+rofi.kb-row-down:                    Down,Control+n,Control+j
 ! "Go to next row, if one left, accept it, if no left next mode." Set from: Default
 ! rofi.kb-row-tab:                     Tab
 ! "Go to the previous page" Set from: Default
