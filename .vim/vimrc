@@ -6,6 +6,7 @@ Plug 'kien/ctrlp.vim'
 
 Plug 'posva/vim-vue'
 
+Plug 'w0rp/ale'
 Plug 'elixir-lang/vim-elixir'
 Plug 'andyl/vim-textobj-elixir'
 Plug 'mhinz/vim-mix-format'
@@ -135,6 +136,17 @@ cabbrev h tab h
 
 " Elixir stuff
 let g:mix_format_on_save = 0
+" elixirLS
+let g:ale_elixir_elixir_ls_release = $HOME.'/dev/elixir-ls/rel'
+
+augroup elixir
+  autocmd FileType elixir nnoremap <c-]> :ALEGoToDefinition<cr>
+augroup END
+
+let g:ale_linters = { 'elixir': ['elixir-ls'], }
+
+let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'], 'elixir': 'mix_format', }
+
 
 map <D-'> :Align=><CR>
 
@@ -169,6 +181,10 @@ endif
 
 " hoist lines up or down with alt-j/alt-k
 " http://vim.wikia.com/wiki/Moving_lines_up_or_down
+
+nnoremap ]a :ALENextWrap<cr>zz
+nnoremap [a :ALEPreviousWrap<cr>zz
+
 nnoremap <D-j> :m+<CR>==
 nnoremap <D-k> :m-2<CR>==
 inoremap <D-j> <Esc>:m+<CR>==gi
@@ -294,6 +310,8 @@ map <leader>rc :topleft :split $MYVIMRC<cr>
 
 " W isn't bound to anything
 command! W :w
+
+
 
 " Rails/rspec test runners
 function! RunTests(filename)
