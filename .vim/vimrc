@@ -6,6 +6,14 @@ Plug 'kien/ctrlp.vim'
 
 Plug 'posva/vim-vue'
 
+" airline stuff
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+set updatetime=250
+
 Plug 'w0rp/ale'
 Plug 'elixir-lang/vim-elixir'
 Plug 'andyl/vim-textobj-elixir'
@@ -52,9 +60,7 @@ set autoindent      " when indenting, copy indentation from previous line
 set copyindent      " Copy the structure of the existing lines indent when autoindenting a new line
 set preserveindent  " When changing the indent of the current line, preserve as much of the indent structure as possible
 set smartindent
-set softtabstop=2
-set tabstop=2
-set shiftwidth=2
+set tags=tags;/     " Look for tags in current directory, otherwise recurse upwards looking for a tags file
 set expandtab       "spaces instead of tabs for better cross-editor compatibility
 
 set backspace=indent,eol,start " allow backspacing over everything
@@ -62,13 +68,18 @@ set backspace=indent,eol,start " allow backspacing over everything
 set t_Co=256
 set ttyfast
 
+" indenting
+set softtabstop=2
+set shiftwidth=2
+set tabstop=2
+
 " don't search all files on the path
 set complete-=i
 
 set cursorline
 "set cursorcolumn=80,120
 
-"set foldmethod=syntax
+set foldmethod=syntax
 set norelativenumber
 set nofoldenable
 set foldnestmax=10
@@ -89,6 +100,7 @@ set listchars=tab:->
 "set mouse=a
 set nobackup
 set noswapfile
+set nowrap
 set nowritebackup
 set number
 "set scroll=2
@@ -110,12 +122,26 @@ set wildmode=list:longest
 "set winheight=999
 
 " terminal color customizations
-hi LineNr ctermbg=DarkBlue
+highlight LineNr ctermbg=DarkBlue
+
+
+" sign column highlight
+highlight GitGutterAdd ctermfg=darkgreen term=bold
+highlight GitGutterDelete ctermfg=darkred term=bold
+highlight GitGutterChange ctermfg=165 term=bold
+highlight GitGutterChangeInvisible ctermfg=yellow term=bold
+
+autocmd BufReadPost * highlight SignColumn ctermbg=black
+
+" airline
+"autocmd BufReadPost * AirlineTheme light
 
 " turn off the underline for cursorline in terminal
 hi CursorLine cterm=NONE
 
 hi StatusLine term=bold cterm=NONE ctermfg=white ctermbg=darkblue "#aabbee
+
+" gitgutter customizations
 
 " set search background to a usable color
 hi Search ctermfg=Black ctermbg=Yellow
@@ -144,9 +170,12 @@ augroup elixir
   autocmd FileType elixir nnoremap <c-]> :ALEGoToDefinition<cr>
 augroup END
 
-let g:ale_linters = { 'elixir': ['elixir-ls'], }
+let g:ale_linters = { 'elixir': ['elixir-ls'], 'ruby': [] }
 
 let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'], 'elixir': 'mix_format', }
+
+" airline/powerline
+let g:airline_powerline_fonts = 1
 
 
 map <D-'> :Align=><CR>
@@ -212,7 +241,7 @@ nnoremap <leader>v :vspl<cr>
 " ctrlp config
 map <D-t> :CtrlP<cr>
 map <leader>f :CtrlP<cr>
-"map <leader>t :CtrlPTag<cr>
+map <leader>c :CtrlPTag<cr>
 map <leader>gv :CtrlP app/views<cr>
 map <leader>gc :CtrlP app/controllers<cr>
 map <leader>gm :CtrlP app/models<cr>
@@ -369,3 +398,5 @@ map <Left> <nop>
 map <Right> <nop>
 map <Up> <nop>
 map <Down> <nop>
+
+highlight SignColumn ctermbg=black
