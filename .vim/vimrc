@@ -1,4 +1,4 @@
-" vim-plug setup
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'tonyc/vim-vividchalk'
@@ -96,7 +96,7 @@ set iskeyword+=?
 
 set laststatus=2
 set list!
-set listchars=tab:->
+set listchars=tab:▸▸,trail:◂
 "set mouse=a
 set nobackup
 set noswapfile
@@ -175,7 +175,13 @@ let g:ale_linters = { 'elixir': ['elixir-ls'], 'ruby': [] }
 let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'], 'elixir': 'mix_format', }
 
 " airline/powerline
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
 let g:airline_powerline_fonts = 1
+let g:airline_symbols.dirty = '*'
 
 
 map <D-'> :Align=><CR>
@@ -237,6 +243,9 @@ nnoremap <C-l> <C-w>l
 
 nnoremap <leader>x :spl<cr>
 nnoremap <leader>v :vspl<cr>
+
+" trim all trailing whitespace
+nnoremap <leader>s mz:%s/\s\+$//e<CR>:nohlsearch<CR>`z:echo "Trailing whitespace removed"<CR>
 
 " ctrlp config
 map <D-t> :CtrlP<cr>
@@ -348,7 +357,7 @@ function! RunTests(filename)
     " Write the file and run tests for the given filename
     :w
     :silent !echo;echo;echo;echo;echo
-    exec ":!clear;zeus test " . a:filename
+    exec ":!clear;echo 'Running tests';JRUBY_OPTS=--dev rspec --color " . a:filename
 endfunction
 
 function! SetTestFile()
