@@ -10,40 +10,44 @@ Plug 'posva/vim-vue'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+"Plug 'airblade/vim-gitgutter'
 
 set updatetime=250
 
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 Plug 'elixir-lang/vim-elixir'
 Plug 'andyl/vim-textobj-elixir'
 Plug 'mhinz/vim-mix-format'
 
-Plug 'bronson/vim-ruby-block-conv'
+"Plug 'bronson/vim-ruby-block-conv'
 Plug 'Raimondi/delimitMate'
 Plug 'kana/vim-smartinput'
 Plug 'kana/vim-textobj-user'
 Plug 'pix/vim-align'
 Plug 'scrooloose/nerdcommenter'
-Plug 'tpope/vim-haml'
-Plug 'tpope/vim-rails'
+"Plug 'tpope/vim-haml'
+"Plug 'tpope/vim-rails'
 Plug 'vim-scripts/JavaScript-syntax'
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/matchit.zip'
-Plug 'vim-scripts/textobj-rubyblock'
+"Plug 'vim-scripts/textobj-rubyblock'
 Plug 'plasticboy/vim-markdown'
 Plug 'kana/vim-textobj-function'
-Plug 'garbas/vim-snipmate'
-
-" javascript stuff
-Plug 'digitaltoad/vim-jade'
-Plug 'vim-scripts/node'
-Plug 'thinca/vim-textobj-function-javascript'
+" required by snipmate
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 
+" requires the two above here
+Plug 'garbas/vim-snipmate'
+
+" javascript stuff
+"Plug 'digitaltoad/vim-jade'
+"Plug 'vim-scripts/node'
+"Plug 'thinca/vim-textobj-function-javascript'
+
+
 Plug 'elzr/vim-json'
-Plug 'joukevandermaas/vim-ember-hbs'
+"Plug 'joukevandermaas/vim-ember-hbs'
 
 call plug#end()
 " end plug setup
@@ -163,16 +167,38 @@ cabbrev h tab h
 
 " Elixir stuff
 let g:mix_format_on_save = 0
+
 " elixirLS
-let g:ale_elixir_elixir_ls_release = $HOME.'/dev/elixir-ls/rel'
 
 augroup elixir
   autocmd FileType elixir nnoremap <c-]> :ALEGoToDefinition<cr>
 augroup END
 
-let g:ale_linters = { 'elixir': ['elixir-ls'], 'ruby': [] }
+"let g:ale_linters.elixir = ['elixir-ls']
+let g:ale_linters = { 'elixir': ['credo', 'elixir-ls'], 'ruby': [] }
+let g:ale_fixers = { '*': [], 'elixir': '', }
+"let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'], 'elixir': 'mix_format', }
 
-let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'], 'elixir': 'mix_format', }
+let g:ale_elixir_elixir_ls_release = $HOME . '/dev/elixir-ls/release'
+let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
+
+set completeopt=menu,menuone,preview,noselect,noinsert
+let g:ale_completion_enabled = 1
+
+let g:ale_completion_enabled = 1
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_text_changed = 'never'
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
+highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+let g:ale_linters_explicit = 1
+let g:ale_lint_on_save = 1
+
+nnoremap ]r :ALENextWrap<CR>
+nnoremap [r :ALEPreviousWrap<CR>
+
+nnoremap <leader>q :bdel!<CR>
 
 " airline/powerline
 
@@ -409,3 +435,5 @@ map <Up> <nop>
 map <Down> <nop>
 
 highlight SignColumn ctermbg=black
+
+set ignorecase
