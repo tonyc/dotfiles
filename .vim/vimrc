@@ -2,7 +2,11 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'tonyc/vim-vividchalk'
-Plug 'kien/ctrlp.vim'
+
+" trying out fzf
+"Plug 'kien/ctrlp.vim'
+Plug 'junegunn/fzf' , { 'do': {  -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 Plug 'posva/vim-vue'
 
@@ -140,6 +144,12 @@ autocmd BufReadPost * highlight SignColumn ctermbg=black
 " airline
 "autocmd BufReadPost * AirlineTheme light
 
+" fix to check file modification time when mix formats the file underneath
+set autoread
+autocmd CursorHold *.ex,*.exs? checktime
+autocmd CursorMoved *.ex,*.exs? checktime
+"autocmd CursorMovedI *.ex,*.exs? checktime
+
 " turn off the underline for cursorline in terminal
 hi CursorLine cterm=NONE
 
@@ -271,28 +281,32 @@ nnoremap <leader>x :spl<cr>
 nnoremap <leader>v :vspl<cr>
 
 " trim all trailing whitespace
-nnoremap <leader>s mz:%s/\s\+$//e<CR>:nohlsearch<CR>`z:echo "Trailing whitespace removed"<CR>
+"nnoremap <leader>s mz:%s/\s\+$//e<CR>:nohlsearch<CR>`z:echo "Trailing whitespace removed"<CR>
 
 " ctrlp config
-map <D-t> :CtrlP<cr>
-map <leader>f :CtrlP<cr>
-map <leader>c :CtrlPTag<cr>
-map <leader>gv :CtrlP app/views<cr>
-map <leader>gc :CtrlP app/controllers<cr>
-map <leader>gm :CtrlP app/models<cr>
-map <leader>gh :CtrlP app/helpers<cr>
-map <leader>gl :CtrlP lib<cr>
-map <leader>gp :CtrlP public<cr>
-map <leader>gv :CtrlP app/views<cr>
-map <leader>gc :CtrlP app/controllers<cr>
-map <leader>gm :CtrlP app/models<cr>
-map <leader>gh :CtrlP app/helpers<cr>
-map <leader>gl :CtrlP lib<cr>
-map <leader>gp :CtrlP public<cr>
-map <leader>ga :CtrlP app/assets<cr>
-map <leader>gs :CtrlP app/assets/stylesheets<cr>
-map <leader>gj :CtrlP app/assets/javascripts<cr>
-map <leader>gf :CtrlP spec/factories<cr>
+map <D-t> :GFiles<cr>
+map <leader>f :GFiles<cr>
+map <leader>F :Rg<cr>
+map <leader>c :Tags<cr>
+map <leader>s :Rg<cr>
+
+"map <leader>gv :CtrlP app/views<cr>
+"map <leader>gc :CtrlP app/controllers<cr>
+"map <leader>gm :CtrlP app/models<cr>
+"map <leader>gh :CtrlP app/helpers<cr>
+"map <leader>gl :CtrlP lib<cr>
+"map <leader>gls :CtrlP lib/simple/schema<cr>
+"map <leader>gp :CtrlP public<cr>
+"map <leader>gv :CtrlP app/views<cr>
+"map <leader>gc :CtrlP app/controllers<cr>
+"map <leader>gm :CtrlP app/models<cr>
+"map <leader>gh :CtrlP app/helpers<cr>
+"map <leader>gl :CtrlP lib<cr>
+"map <leader>gp :CtrlP public<cr>
+"map <leader>ga :CtrlP app/assets<cr>
+"map <leader>gs :CtrlP app/assets/stylesheets<cr>
+"map <leader>gj :CtrlP app/assets/javascripts<cr>
+"map <leader>gf :CtrlP spec/factories<cr>
 
 let g:ctrlp_use_caching = 0
 let g:ctrlp_match_window_reversed = 1
@@ -312,8 +326,8 @@ map <leader>e :edit %%
 map <leader>v :view %%
 
 " Surround binds
-map <leader>s( ysiW)
-map <leader>s[ ysiW]
+"map <leader>s( ysiW)
+"map <leader>s[ ysiW]
 
 " Set the netrw listing style to tree
 let g:netrw_liststyle = 3
@@ -376,14 +390,26 @@ map <leader>rc :topleft :split $MYVIMRC<cr>
 " W isn't bound to anything
 command! W :w
 
+command! -nargs=* T split | terminal <args>
 
+" custom ripgrep command
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number -w --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%', '?'),
+  \   <bang>0)
+
+function! RunAllTests()
+  :w
+  :exec ":T echo \"Running all tests\"; docker exec -it dev_api_1 make test
+endfunction
 
 " Rails/rspec test runners
 function! RunTests(filename)
     " Write the file and run tests for the given filename
     :w
-    :silent !echo;echo;echo;echo;echo
-    exec ":!clear;echo 'Running tests';JRUBY_OPTS=--dev rspec --color " . a:filename
+    :exec ":T echo \"Running " . a:filename . "\"; docker exec -it dev_api_1 make test file=" . a:filename
 endfunction
 
 function! SetTestFile()
@@ -399,7 +425,7 @@ function! RunTestFile(...)
     endif
 
     " Run the tests for the previously-marked file.
-    let in_spec_file = match(expand("%"), '_spec.rb$') != -1
+    let in_spec_file = match(expand("%"), '_test.exs$') != -1
     if in_spec_file
         call SetTestFile()
     elseif !exists("t:grb_test_file")
@@ -423,7 +449,7 @@ map <leader>T :call RunTestFile()<cr>
 map <leader>t :call RunNearestTest()<cr>
 map <leader>r :call RunNpmTest()<cr>
 " Run all test files
-map <leader>a :call RunTests('spec')<cr>
+map <leader>a :call RunAllTests())<cr>
 
 "map <leader>a :A<cr>
 map <leader>av :AV<CR>
