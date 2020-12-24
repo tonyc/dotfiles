@@ -1,4 +1,3 @@
-
 call plug#begin('~/.vim/plugged')
 
 Plug 'tonyc/vim-vividchalk'
@@ -28,7 +27,7 @@ Plug 'mhinz/vim-mix-format'
 Plug 'Raimondi/delimitMate'
 Plug 'kana/vim-smartinput'
 Plug 'kana/vim-textobj-user'
-Plug 'pix/vim-align'
+"Plug 'pix/vim-align'
 Plug 'scrooloose/nerdcommenter'
 "Plug 'tpope/vim-haml'
 "Plug 'tpope/vim-rails'
@@ -381,7 +380,7 @@ map <leader>gr f(gf
 "map <leader>gr :topleft :split config/routes.rb<cr>
 "map <leader>gg :topleft :split Gemfile<cr>
 
-map <leader>rc :topleft :split $MYVIMRC<cr>
+"map <leader>rc :topleft :split $MYVIMRC<cr>
 
 " W isn't bound to anything
 command! W :w
@@ -391,6 +390,9 @@ command! -nargs=* T split | terminal <args>
 
 " fzf config
 
+" no preview window
+let g:fzf_preview_window = ['right:hidden', 'ctrl-/']
+
 command! -bang -nargs=* All
   \ call fzf#run(fzf#wrap({'source': 'rg --files --hidden --no-ignore-vcs --glob "!{node_modules/*,.git/*,_build}"', 'down': '40%', 'options': '--expect=ctrl-t,ctrl-x,ctrl-v --multi --reverse' }))
 
@@ -399,6 +401,9 @@ map <leader>f :All<cr>
 map <leader>F :Rg<cr>
 map <leader>c :Tags<cr>
 map <leader>s :Rg<cr>
+map <leader>r :Buffers<cr>
+map <leader>b :Buffers<cr>
+
 
 " custom ripgrep command
 "command! -bang -nargs=* Rg
@@ -447,15 +452,15 @@ function! RunNearestTest()
     call RunTestFile(":" . spec_line_number)
 endfunction
 
-function! RunNpmTest()
-  exec ":!clear; npm test"
-endfunction
+"function! RunNpmTest()
+"  exec ":!clear; npm test"
+"endfunction
 
 " Run this file
 map <leader>T :call RunTestFile()<cr>
 " Run only the example under the cursor
 map <leader>t :call RunNearestTest()<cr>
-map <leader>r :call RunNpmTest()<cr>
+"map <leader>r :call RunNpmTest()<cr>
 " Run all test files
 map <leader>a :call RunAllTests())<cr>
 
