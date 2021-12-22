@@ -253,3 +253,29 @@ snippet wl word list
 	~w(${0})
 snippet al atom list
 	~w(${0})a
+snippet mgt mazurka get conn test
+	test "${1:description}", ctx do
+		${2}
+
+		request do
+			authenticate_as(ctx.user, ctx.client)
+			query_string_params(%{${3:key: :value}})
+		end
+	after conn ->
+		conn
+		|> assert_status(${4:200})
+		|> assert_json(${5:%{}})
+	end
+snippet mpt mazurka post conn test
+	test "${1:description}", ctx do
+		${2}
+
+		request do
+			authenticate_as(ctx.user, ctx.client)
+			body %{${3}}
+		end
+	after conn ->
+		conn
+		|> assert_status(${4:200})
+		|> assert_json(${5:%{}})
+	end

@@ -14,11 +14,12 @@ Plug 'posva/vim-vue'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-projectionist'
 "Plug 'airblade/vim-gitgutter'
 
 set updatetime=250
 
-Plug 'dense-analysis/ale'
+"Plug 'dense-analysis/ale'
 Plug 'elixir-lang/vim-elixir'
 Plug 'andyl/vim-textobj-elixir'
 Plug 'mhinz/vim-mix-format'
@@ -27,7 +28,8 @@ Plug 'mhinz/vim-mix-format'
 Plug 'Raimondi/delimitMate'
 Plug 'kana/vim-smartinput'
 Plug 'kana/vim-textobj-user'
-Plug 'pix/vim-align'
+" vim-align maps <leader>rwp, which I don't like.
+"Plug 'pix/vim-align'
 Plug 'scrooloose/nerdcommenter'
 "Plug 'tpope/vim-haml'
 "Plug 'tpope/vim-rails'
@@ -55,6 +57,9 @@ Plug 'elzr/vim-json'
 
 call plug#end()
 " end plug setup
+
+let g:snipMate = { 'snippet_version' : 1 }
+
 
 syntax enable
 
@@ -116,6 +121,8 @@ set scrolloff=3
 set shortmess=atI
 set showmatch
 set smartcase
+"set splitbelow
+set splitright
 set title
 set visualbell
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*.so
@@ -131,7 +138,7 @@ set wildmode=list:longest
 
 " terminal color customizations
 highlight LineNr ctermbg=DarkBlue
-
+highlight Search ctermbg=4 ctermfg=White
 
 " sign column highlight
 highlight GitGutterAdd ctermfg=darkgreen term=bold
@@ -189,7 +196,7 @@ let g:ale_linters = { 'elixir': ['credo', 'elixir-ls'], 'ruby': [] }
 let g:ale_fixers = { '*': [], 'elixir': '', }
 "let g:ale_fixers = { '*': ['remove_trailing_lines', 'trim_whitespace'], 'elixir': 'mix_format', }
 
-let g:ale_elixir_elixir_ls_release = $HOME . '/dev/elixir-ls/release'
+let g:ale_elixir_elixir_ls_release = $HOME . '/dev/elixir-ls/rel'
 let g:ale_elixir_elixir_ls_config = {'elixirLS': {'dialyzerEnabled': v:false}}
 
 set completeopt=menu,menuone,preview,noselect,noinsert
@@ -208,7 +215,12 @@ let g:ale_lint_on_save = 1
 nnoremap ]r :ALENextWrap<CR>
 nnoremap [r :ALEPreviousWrap<CR>
 
+nnoremap <leader>r :Buffers<CR>
 nnoremap <leader>q :bdel!<CR>
+
+"copy/paste
+nnoremap <leader>Y "+yy
+nnoremap <leader>y "+y
 
 " airline/powerline
 
@@ -257,8 +269,8 @@ endif
 nnoremap ]a :ALENextWrap<cr>zz
 nnoremap [a :ALEPreviousWrap<cr>zz
 
-nnoremap <D-j> :m+<CR>==
-nnoremap <D-k> :m-2<CR>==
+nnoremap <C-J> :m+<CR>==
+nnoremap <C-K> :m-2<CR>==
 inoremap <D-j> <Esc>:m+<CR>==gi
 inoremap <D-k> <Esc>:m-2<CR>==gi
 vnoremap <D-j> :m'>+<CR>gv=gv
@@ -280,15 +292,13 @@ nnoremap <C-l> <C-w>l
 nnoremap <leader>x :spl<cr>
 nnoremap <leader>v :vspl<cr>
 
+
+" quick fix navigation
+nnoremap <silent> <leader>] :cnext<CR>
+nnoremap <silent> <leader>] :cprevious<CR>
+
 " trim all trailing whitespace
 "nnoremap <leader>s mz:%s/\s\+$//e<CR>:nohlsearch<CR>`z:echo "Trailing whitespace removed"<CR>
-
-" ctrlp config
-map <D-t> :GFiles<cr>
-map <leader>f :GFiles<cr>
-map <leader>F :Rg<cr>
-map <leader>c :Tags<cr>
-map <leader>s :Rg<cr>
 
 "map <leader>gv :CtrlP app/views<cr>
 "map <leader>gc :CtrlP app/controllers<cr>
@@ -385,12 +395,27 @@ map <leader>gr f(gf
 "map <leader>gr :topleft :split config/routes.rb<cr>
 "map <leader>gg :topleft :split Gemfile<cr>
 
-map <leader>rc :topleft :split $MYVIMRC<cr>
+"map <leader>rc :topleft :split $MYVIMRC<cr>
 
 " W isn't bound to anything
 command! W :w
 
 command! -nargs=* T split | terminal <args>
+
+" fzf/ripgrep config
+"map <D-t> :GFiles<cr>
+map <leader>f :Files<cr>
+map <leader>F :Rg<cr>
+map \ :Rg<cr>
+map <leader>c :Tags<cr>
+
+let g:fzf_preview_window = []
+"let g:fzf_layout = { 'down': '12' }
+"let g:fzf_layout = { 'window': { 'width': 0.25, 'height': 0.2 } }
+let g:fzf_layout = { 'window': { 'width': 120, 'height': 14, 'yoffset': 0, 'border': 'rounded' } }
+
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden'
+
 
 " custom ripgrep command
 command! -bang -nargs=* Rg
@@ -400,9 +425,25 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%', '?'),
   \   <bang>0)
 
+command! -bang LibFiles call fzf#vim#files('lib/simple', <bang>0)
+nnoremap <leader>l :LibFiles<cr>
+
+command! -bang SchemaFiles call fzf#vim#files('lib/simple/schema', <bang>0)
+nnoremap <leader>s :SchemaFiles<cr>
+
+command! -bang WebFiles call fzf#vim#files('web', <bang>0)
+nnoremap <leader>w :WebFiles<cr>
+
+command! -bang TestFiles call fzf#vim#files('web', <bang>0)
+nnoremap <leader>gt :TestFiles<cr>
+
+command! -bang DirFiles call fzf#vim#files(expand('%:p:h'), <bang>0)
+nnoremap <leader>d :DirFiles<cr>
+
+
 function! RunAllTests()
   :w
-  :exec ":T echo \"Running all tests\"; docker exec -it dev_api_1 make test
+  :exec ":T echo \"Running all tests\"; docker exec -it dev_api_1 make test"
 endfunction
 
 " Rails/rspec test runners
@@ -447,9 +488,9 @@ endfunction
 map <leader>T :call RunTestFile()<cr>
 " Run only the example under the cursor
 map <leader>t :call RunNearestTest()<cr>
-map <leader>r :call RunNpmTest()<cr>
+"map <leader>r :call RunNpmTest()<cr>
 " Run all test files
-map <leader>a :call RunAllTests())<cr>
+map <leader>a :call RunAllTests()<cr>
 
 "map <leader>a :A<cr>
 map <leader>av :AV<CR>
