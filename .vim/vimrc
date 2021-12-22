@@ -43,7 +43,8 @@ Plug 'tomtom/tlib_vim'
 
 " requires the two above here
 Plug 'garbas/vim-snipmate'
-
+" h snipmate-deprecate
+let g:snipMate = { 'snippet_version' : 1 }
 
 Plug 'jszakmeister/vim-togglecursor'
 
@@ -158,7 +159,7 @@ hi CursorLine cterm=NONE
 
 hi StatusLine term=bold cterm=NONE ctermfg=white ctermbg=darkblue "#aabbee
 
-set term=xterm-256color
+"set term=xterm-256color
 
 " gitgutter customizations
 
