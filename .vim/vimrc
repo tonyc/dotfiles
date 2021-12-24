@@ -2,8 +2,6 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tonyc/vim-vividchalk'
 
-" trying out fzf
-"Plug 'kien/ctrlp.vim'
 Plug 'junegunn/fzf' , { 'do': {  -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -52,6 +50,55 @@ Plug 'jszakmeister/vim-togglecursor'
 "Plug 'digitaltoad/vim-jade'
 "Plug 'vim-scripts/node'
 "Plug 'thinca/vim-textobj-function-javascript'
+
+" Language server
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Rust
+Plug 'rust-lang/rust.vim'
+Plug 'vim-syntastic/syntastic'
+
+
+" coc settings
+"
+" toggle inlay hints, useful for cleaning up rust type hints when desired
+map <F3> :CocCommand rust-analyzer.toggleInlayHints<cr>
+
+" skip around to diagnostic messages
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" apply suggested quickfix
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" run code lens on current line
+nmap <leader>cl  <Plug>(coc-codelens-action)
+
+" rename symbol
+nmap <leader>rn <Plug>(coc-rename)
+
+" C-f and C-b for scrolling in popups
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  "nnoremap <silent><nowait><expr> <C-e> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  "nnoremap <silent><nowait><expr> <C-y> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-e> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-y> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  "vnoremap <silent><nowait><expr> <C-e> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  "vnoremap <silent><nowait><expr> <C-y> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" syntastic config. This slightly overlaps with coc and rust-analyzer
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+
+
+
 
 
 Plug 'elzr/vim-json'
@@ -154,6 +201,9 @@ autocmd CursorHold *.ex,*.exs? checktime
 autocmd CursorMoved *.ex,*.exs? checktime
 "autocmd CursorMovedI *.ex,*.exs? checktime
 
+autocmd Cursorhold * silent call CocActionAsync('highlight')
+highlight CocHighlightText ctermbg=darkblue ctermfg=white
+
 " turn off the underline for cursorline in terminal
 hi CursorLine cterm=NONE
 
@@ -175,7 +225,7 @@ let mapleader = ','
 let delimitMate_expand_space = 1
 
 " :h <subject> to open help in new tab
-cabbrev h tab h
+"cabbrev h tab h
 
 " Elixir stuff
 let g:mix_format_on_save = 0
@@ -380,13 +430,16 @@ imap <C-l> <space>=><space>
 map <leader>gr f(gf
 "map <leader>gr :topleft :split config/routes.rb<cr>
 "map <leader>gg :topleft :split Gemfile<cr>
-
 "map <leader>rc :topleft :split $MYVIMRC<cr>
 
 " W isn't bound to anything
 command! W :w
 
 command! -nargs=* T split | terminal <args>
+
+" reloads config
+command! Reload :source $MYVIMRC
+command! Config :edit $MYVIMRC
 
 
 " fzf config
@@ -402,7 +455,6 @@ map <leader>f :All<cr>
 map <leader>F :Rg<cr>
 map <leader>c :Tags<cr>
 map <leader>s :Rg<cr>
-map <leader>r :Buffers<cr>
 map <leader>b :Buffers<cr>
 
 
@@ -460,7 +512,12 @@ endfunction
 " Run this file
 map <leader>T :call RunTestFile()<cr>
 " Run only the example under the cursor
-map <leader>t :call RunNearestTest()<cr>
+
+"map <leader>t :call RunNearestTest()<cr>
+
+" extremely rust-specific
+map <leader>t :T clear; and cargo run<cr>
+
 "map <leader>r :call RunNpmTest()<cr>
 " Run all test files
 map <leader>a :call RunAllTests())<cr>
@@ -475,7 +532,7 @@ map <Up> <nop>
 map <Down> <nop>
 
 highlight SignColumn ctermbg=black
-
+highlight CocHighlightText ctermbg=darkblue ctermfg=white
 set ignorecase
 
 
