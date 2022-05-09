@@ -2,8 +2,6 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tonyc/vim-vividchalk'
 
-" trying out fzf
-"Plug 'kien/ctrlp.vim'
 Plug 'junegunn/fzf' , { 'do': {  -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
@@ -14,7 +12,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-projectionist'
-"Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 
 set updatetime=250
 
@@ -23,19 +21,19 @@ Plug 'elixir-lang/vim-elixir'
 Plug 'andyl/vim-textobj-elixir'
 Plug 'mhinz/vim-mix-format'
 
-"Plug 'bronson/vim-ruby-block-conv'
+Plug 'bronson/vim-ruby-block-conv'
 Plug 'Raimondi/delimitMate'
 Plug 'kana/vim-smartinput'
 Plug 'kana/vim-textobj-user'
 " vim-align maps <leader>rwp, which I don't like.
 "Plug 'pix/vim-align'
 Plug 'scrooloose/nerdcommenter'
-"Plug 'tpope/vim-haml'
-"Plug 'tpope/vim-rails'
+Plug 'tpope/vim-haml'
+Plug 'tpope/vim-rails'
 Plug 'vim-scripts/JavaScript-syntax'
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/matchit.zip'
-"Plug 'vim-scripts/textobj-rubyblock'
+Plug 'vim-scripts/textobj-rubyblock'
 Plug 'plasticboy/vim-markdown'
 Plug 'kana/vim-textobj-function'
 " required by snipmate
@@ -407,6 +405,9 @@ map <leader>f :Files<cr>
 map <leader>F :Rg<cr>
 map \ :Rg<cr>
 map <leader>c :Tags<cr>
+map <leader>gm :Files app/models<cr>
+map <leader>gc :Files app/controllers<cr>
+map <leader>gs :Files app/services<cr>
 
 let g:fzf_preview_window = []
 "let g:fzf_layout = { 'down': '12' }
@@ -442,14 +443,14 @@ nnoremap <leader>d :DirFiles<cr>
 
 function! RunAllTests()
   :w
-  :exec ":T echo \"Running all tests\"; docker exec -it dev_api_1 make test"
+  :exec ":T echo \"Running all tests\"; bundle exec rspec --format p --tag ~js --exclude-pattern \"spec/system/**/*_spec.rb\""
 endfunction
 
 " Rails/rspec test runners
 function! RunTests(filename)
     " Write the file and run tests for the given filename
     :w
-    :exec ":T echo \"Running " . a:filename . "\"; docker exec -it dev_api_1 make test file=" . a:filename
+    :exec ":T echo \"Running " . a:filename . "\"; bundle exec rspec --format p " . a:filename
 endfunction
 
 function! SetTestFile()
@@ -465,7 +466,7 @@ function! RunTestFile(...)
     endif
 
     " Run the tests for the previously-marked file.
-    let in_spec_file = match(expand("%"), '_test.exs$') != -1
+    let in_spec_file = match(expand("%"), '_spec.rb$') != -1
     if in_spec_file
         call SetTestFile()
     elseif !exists("t:grb_test_file")
@@ -479,15 +480,10 @@ function! RunNearestTest()
     call RunTestFile(":" . spec_line_number)
 endfunction
 
-function! RunNpmTest()
-  exec ":!clear; npm test"
-endfunction
-
 " Run this file
 map <leader>T :call RunTestFile()<cr>
 " Run only the example under the cursor
 map <leader>t :call RunNearestTest()<cr>
-"map <leader>r :call RunNpmTest()<cr>
 " Run all test files
 map <leader>a :call RunAllTests()<cr>
 
